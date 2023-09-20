@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8.0.32
+    environment:
+      MYSQL_ROOT_PASSWORD: 1105
+      MYSQL_DATABASE: perfumeDB
+      MYSQL_PASSWORD: 1105
+    volumes:
+      - db_data:/var/lib/mysql
+    command:
+      - '--character-set-server=utf8mb4'
+      - '--collation-server=utf8mb4_unicode_ci'
+    ports:
+      - "3307:3306"
+
+
+
+
+  webapp: # 내가 선택한 서비스의 이름 변경 가능함
+    build:
+      context: . # dockerfile의 위치
+      dockerfile: dockerfile
+    environment:
+      WAIT_HOSTS: db:3306
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/marketDB?createDatabaseIfNotExist=true&characterEncoding=UTF-8&profileSql=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1105
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    command: ["java", "-jar", "/app.jar"]
+
+
+volumes:
+  db_data:

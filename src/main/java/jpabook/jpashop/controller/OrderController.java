@@ -74,7 +74,6 @@ public class OrderController {
                     String count = (String) jsonObject.get("count");
                     int OrderCount = Integer.parseInt(count);
 
-                    System.out.println("왜 안되냐 ");
                     orderService.order(MemberIdToInt, itemIdToInt, OrderCount);
                 }
             } else if (request.getServletPath().equals("/orderFromCart")){
@@ -85,24 +84,6 @@ public class OrderController {
 
                 for (int i = 0; i < forCartObject.length(); i++) {
                     JSONObject cartJsonObject = (JSONObject)forCartObject.get(i);
-//                    System.out.println("i want this " + cartJsonObject);
-
-
-//                    JSONObject couponId = (JSONObject)forCartObject.get(1);
-//                    int couponIdForFindCouponBeforeCast = (int) couponId.get("couponId");
-//                    System.out.println("hello coupon : " + couponIdForFindCouponBeforeCast);
-//                    Long couponIdForFindCoupon = Long.parseLong(String.valueOf(couponIdForFindCouponBeforeCast));
-//                    Coupon coupon = couponService.findOne(couponIdForFindCoupon);
-//                    Long couponIdForOrder = coupon.getId();
-//
-//                    JSONArray arrayForClassificationWithCartAndCoupon =  cartJsonObject.getJSONArray("cart_items");
-//                    System.out.println("this is for coupon Service : " + arrayForClassificationWithCartAndCoupon);
-
-//                    for (int j = 0; j < arrayForClassificationWithCartAndCoupon.length(); j++) {
-//                        JSONObject objectOfCartFormJson = (JSONObject)arrayForClassificationWithCartAndCoupon.get(i);
-//                        System.out.println("this var : " + objectOfCartFormJson);
-//                    }
-
 
                     int CartIdForFindMemberBeforeCast = (int) cartJsonObject.get("id");
                     Long cartIdForFindMember = Long.parseLong(String.valueOf(CartIdForFindMemberBeforeCast));
