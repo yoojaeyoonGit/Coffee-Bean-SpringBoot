@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"/>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<!--    <div> <div>-->
+    <form  class="form-inline"  th:object="${loggedMember}" >
+        <div class="form-group mb-2"></div>
+        <div class="form-group mx-sm-1 mb-2"></div>
+            <h3 th:text="${loggedMember.name} "></h3>
+            <h3>&nbsp; 회원님의 장바구니</h3>
+        <table class="table table-striped" th:object="${cart}" style="margin-bottom: 50px;">
+            <thead>
+            <tr>
+                <th>#</th> <th>상품명</th> <th>상품 가격</th> <th>수량</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${cart.cart_items}">
+                    <td th:text="${item.item.id}"></td>
+                    <td th:text="${item.item.name}"></td>
+                    <td th:text="${item.item.price}"></td>
+                    <td th:text="${item.count}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <table>
+            <tbody>
+            <tr>
+                <h3>쿠폰 사용하기</h3>
+                <select name="couponId" id="coupon" class="form-control" th:object="${coupons}" onchange="couponSelect(cartCost)">
+                    <option value="">쿠폰 선택</option>
+                    <option
+                            th:each="coupon : ${coupons}"
+                            th:value="${coupon.id}"
+                            th:text="${coupon.name}" />
+                </select>
+            </tr>
+            </tbody>
+        </table>
+        <br/>
+        <table>
+                <tr>
+                    <td><h3>총 상품 수 :</h3></td>
+                    <td><h3 th:text="${cart.cart_items.size()}"></h3></td>
+                </tr>
+                <tr>
+                    <td><h3 id="priceNotice">총 상품 가격 : &nbsp;</h3></td>
+                    <td><h3 th:object="${cartCost}" th:text="${cartCost}" id="priceText"></h3></td>
+                </tr>
+        </table>
+    </form>
+    <button id="OrderBtn" onclick="cartForOrder()" type="button" class="btn btn-primary" style="margin-top: 20px; margin-bottom: 20px;">Order</button>
+    <div th:replace="fragments/footer :: footer"/>
+</div> <!-- /container -->
+</body>
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    // const member = [[${loggedMember}]];
+    // console.log(member)
+
+    const cart = [[${cart}]];
+    const couponlist = [[${coupons}]];
+    let cartCost = [[${cartCost}]]
+    let arr = [cart];
+    let JsonForPush = {};
+
+
+    const priceText = document.querySelector("#priceText");
+    const priceNotice = document.querySelector("#priceNotice");
+
+    let couponValue = coupon.options[coupon.selectedIndex].value;
+    function couponSelect(price) {
+        console.log("couponList" + couponlist.name);
+        let couponInUse = 0;
+        couponValue = coupon.options[coupon.selectedIndex].value;
+
+        const originalCost = price;
+        let couponCost = originalCost;
+
+        for(let i = 0; i < couponlist.length; i++) {
+            console.log(i);
+            couponCost = originalCost;
+            console.log("쿠폰 아이디 " + couponValue);
+            if (parseInt(couponlist[i].id) == parseInt(couponValue)) {
+                if (couponlist[i].discountPrice != 0) {
+
+                    couponInUse = couponlist[i].discountPrice;
+                    couponCost = couponCost - couponInUse;
+
+                    priceNotice.innerText = "쿠폰 사용 시 가격 :  ";
+                    priceText.innerText = couponCost;
+                    couponValue = couponlist[i].id;
+                    break;
+                } else {
+                    couponCost = originalCost;
+
+                    couponInUse = couponlist[i].discountPercent;
+                    couponCost = couponCost - (couponCost * (couponInUse/100));
+
+                    priceNotice.innerText = "쿠폰 사용 시 가격 :  ";
+                    priceText.innerText = couponCost;
+                    couponValue = couponlist[i].id;
+                    break;
+                }
+            } else {
+                priceNotice.innerText = "총 상품 가격 :  ";
+                priceText.innerText = originalCost;
+            }
+        }
+
+        console.log(couponValue);
+    JsonForPush = {
+        "couponId":couponValue
+    };
+
+    console.log(arr);
+    console.log("this is " + JsonForPush.couponId);
+    }
+
+    function cartForOrder() {
+        arr.push(JsonForPush);
+        console.log(arr);
+        $.ajax({
+            data: JSON.stringify(arr),
+            url: "/orderFromCart",
+            type: "POST",
+            contentType: "application/json; charset=UTF-8",
+            success: function (data) {
+                location.href = "/orders"
+            },
+            error: function() {
+                alert("error… ");
+            }
+        });
+    }
+
+
+
+
+    /*]]>*/
+</script>
+<script src="https://code.jquery.com/jquery-3.6.4.js"
+        integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
+        crossorigin="anonymous">
+</script>
+
+</html>

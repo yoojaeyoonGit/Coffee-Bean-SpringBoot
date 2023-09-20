@@ -1,0 +1,50 @@
+version: "3"
+services:
+#  services:
+    database-mysql:
+      container_name: database-mysql
+      platform: linux/x86_64
+      image: mysql/mysql-server:8.0
+
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: jpashop	// database 이름
+        MYSQL_USER: root
+        MYSQL_PASSWORD: 20031105
+        TZ: Asia/Seoul
+
+      volumes:
+        - ./mysql-init.d:/docker-entrypoint-initdb.d
+
+      ports:
+        - '13306:3306'
+
+      command:
+        - '--character-set-server=utf8mb4'
+        - '--collation-server=utf8mb4_unicode_ci'
+
+    database-adminer:
+      container_name: database-adminer
+      image: adminer:latest
+      ports:
+        - "18080:8080"
+      environment:
+        - ADMINER_DEFAULT_SERVER=database-mysql
+        - ADMINER_DESIGN=hydra
+        - ADMINER_PLUGINS=tables-filter tinymce
+#  db:
+#    image: mysql:8.0.28
+#    platform: linux/x86_64
+#    ports:
+#      - 3306:3306
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: jpashop	// database 이름
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: 20031105
+#      TZ: Asia/Seoul
+#    volumes:
+#      - ./db/mysql/data:/var/lib/mysql
+#      - ./db/mysql/config:/etc/mysql/conf.d
+#      - ./db/mysql/init:/docker-entrypoint-initdb.d

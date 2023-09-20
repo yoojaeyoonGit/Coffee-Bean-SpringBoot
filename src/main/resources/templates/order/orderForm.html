@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container"  th:object="${loggedMember}">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <form role="form" action="/order" method="post">
+        <div class="form-group">
+            <label for="member">주문회원</label>
+            <select name="memberId" id="member" class="form-control" onchange="able(this)">
+                <option value="">회원선택</option>
+                <option
+                        th:each="member : ${members}"
+                        th:value="${member.id}"
+                        th:text="${member.name}" />
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="item">상품명</label>
+            <select name="itemId" id="item" class="form-control" onchange="able(this)">
+                <option value="">상품선택</option>
+                <option th:each="item : ${items}"
+                        th:value="${item.id}"
+                        th:text="${item.name}" />
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="count">주문수량</label>
+            <input type="number" name="count" class="form-control" id="count" placeholder="주문 수량을 입력하세요" onchange="sendJson(this)" onclick="" disabled>
+        </div>
+
+        <div id='result'></div>
+
+        <button onclick="orderArray()" id="OrderBtn" type="button" class="btn btn-primary" style="margin-top: 20px;">Order</button>
+
+        <button onclick="cartArray()" id="CartBtn" type="button" class="btn btn-primary" style="margin-top: 20px;">Cart</button>
+
+    </form>
+    <br/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    let qualified = 0;
+    let arr = [];
+
+    let loggedMember = "[[${loggedMember.id}]]";
+    console.log(loggedMember);
+
+    const memberName = document.querySelector("#member");
+    const mdName = document.querySelector("#item");
+    const countInput = document.querySelector("#count");
+    function able(e) {
+        if (!mdName.value == "" && !memberName.value == "") {
+            countInput.disabled = false;
+        }
+    }
+    function sendJson(e) {
+        // 선택된 데이터 가져오기
+        const value = e.value;
+        // 데이터 출력
+        const memberText = member.options[member.selectedIndex].text;
+        const memberValue = member.options[member.selectedIndex].value;
+        const count = document.getElementById("count");
+
+        const itemValue = item.options[item.selectedIndex].value;
+        const itemText = item.options[item.selectedIndex].text;
+
+        let orderData = {
+            member: memberText,
+            memberId: memberValue,
+            item: itemText,
+            itemId: itemValue,
+            count: count.value
+        };
+
+        arr.push(orderData);
+
+        if(qualified % 2 == 0 && value != "" && itemValue != "" && count.value != "") {
+
+            const newDiv = document.createElement("div");
+            const newContent1 = document.createTextNode(memberText + "      ");
+            const newContent2 = document.createTextNode(itemText + "      ");
+            const newContent3 = document.createTextNode(count.value);
+            newDiv.appendChild(newContent1);
+            newDiv.appendChild(newContent2);
+            newDiv.appendChild(newContent3);
+            const currentDiv = document.getElementById("div1");
+            document.body.insertBefore(newDiv, currentDiv);
+
+            count.value = null;
+            member[0].selected = true;
+            item[0].selected = true;
+
+            qualified = 0;
+
+            const OrderBtn = document.getElementById("OrderBtn");
+            OrderBtn.before(newDiv);
+
+            console.log(arr);
+
+            countInput.disabled = true;
+        }
+    }
+    function orderArray() {
+        $.ajax({
+            data: JSON.stringify(arr),
+            url: "/order",
+            type: "POST",
+            contentType: "application/json; charset=UTF-8",
+            success: function (data) {
+                location.href = "/orders"
+            },
+            error: function() {
+                alert("error… ");
+            }
+        });
+    }
+
+    function cartArray() {
+        $.ajax({
+            data: JSON.stringify(arr),
+            url: "/cart/[[${loggedMember.id}]]",
+            type: "POST",
+            contentType: "application/json; charset=UTF-8",
+            success: function (data) {
+                // alert("success");
+                location.href = "/cart/[[${loggedMember.id}]]"
+            },
+            error: function() {
+                alert("error… ");
+            }
+        });
+    }
+    /*]]>*/
+</script>
+<script src="https://code.jquery.com/jquery-3.6.4.js"
+        integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
+        crossorigin="anonymous"></script>
+</html>
