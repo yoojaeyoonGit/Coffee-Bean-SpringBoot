@@ -3,6 +3,8 @@ package jpabook.jpashop.controller;
 
 import jpabook.jpashop.SessionConst;
 import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Controller;
@@ -14,24 +16,30 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class HomeController {
+    private final MemberService memberService;
     @RequestMapping("/" )
     public String home(HttpServletRequest request, Model model) {
         log.info("home controller");
         HttpSession session = request.getSession(false);
-        if(session == null) {
-            return "redirect:/members/new";
+
+        if (session == null) {
+            System.out.println("시발뭐여");
+            if (memberService.findMembers().size() == 0) {
+                System.out.println("시발 뭐야");
+                return "redirect:/members/new";
+            } else {
+                return "redirect:/login";
+            }
         }
 
         Member loginmember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
-        if (loginmember == null) {
-            return "redirect:/members/new";
-        }
 
         Member member = (Member) session.getAttribute("loginMember");
         model.addAttribute("member", member);
         System.out.println(member.getId());
-        return "/home";
+        return "home";
     }
 }
