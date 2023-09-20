@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoginService {
     private final MemberRepository memberRepository;
 
-    public Member login(Long id, String password) {
-        Member member = memberRepository.findOne(id);
+    public Member login(String member_login_id, String password) {
+        Member member = memberRepository.findOneByLoginId(member_login_id);
         if(!member.getPassword().equals(password)){
             System.out.println("Wrong password");
             member = null;

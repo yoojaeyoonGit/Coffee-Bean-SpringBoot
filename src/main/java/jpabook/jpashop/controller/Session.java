@@ -37,12 +37,12 @@ public class Session {
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult, HttpServletRequest request) {
         try{
-        System.out.println("password = " + form.getPassword() + "   " + "loginId = " + form.getLoginId());
+        System.out.println("password = " + form.getPassword() + "   " + "loginId = " + form.getMember_login_id());
         if (bindingResult.hasErrors()) {
             return "login";
         }
 
-        Member loginMember = loginService.login((Long) form.getLoginId(), form.getPassword());
+        Member loginMember = loginService.login((String) form.getMember_login_id(), form.getPassword());
         log.info("login? {}", loginMember.getName());
 
         if (loginMember == null) {

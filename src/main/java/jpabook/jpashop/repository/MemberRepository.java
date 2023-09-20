@@ -22,6 +22,8 @@ public class MemberRepository {
         return em.find(Member.class, id); // 정보 반환  첫 번째 타입, 두 번째 pk
     }
 
+
+
     public List<Member> findAll() {
         return em.createQuery("select m from Member m", Member.class) // 첫 번째 JPQL 사용, 두 번째 반환타입
                 .getResultList();
@@ -32,5 +34,11 @@ public class MemberRepository {
         return em.createQuery("select m from Member m where m.name = :name", Member.class)
                 .setParameter("name",name)
                 .getResultList();
+    }
+
+    public Member findOneByLoginId(String memberLoginId) {
+        return em.createQuery("select m from Member m where m.member_login_id= :memberLoginId", Member.class)
+                .setParameter("memberLoginId", memberLoginId)
+                .getSingleResult();
     }
 }
