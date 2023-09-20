@@ -4,11 +4,9 @@ Spring:
     suffix: .html
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/jpashop?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/marketDB?serverTimezone=Asia/Seoul
     username: root
     password: 1105
-#    url: jdbc:h2:tcp://localhost/~/jpashop;
-#    driver-class-name: org.h2.Driver
 
 
   jpa:
