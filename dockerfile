@@ -13,7 +13,7 @@ RUN ./gradlew build -x test
 
 FROM openjdk:11-jdk-slim
 
-ARG JAR_FILE=build/libs/perfumeManagingSystem-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=build/libs/jpashop-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
 COPY wait-for-it.sh wait-for-it.sh
